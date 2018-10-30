@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import random
 
 app = Flask(__name__)
@@ -59,6 +59,19 @@ def lotto():
     lucky = random.sample(num_list,6)
     return render_template("lotto.html",lucky = sorted(lucky))
     
+@app.route("/naver")
+def naver():
+    return render_template("naver.html")
     
-    
-    
+@app.route("/google")
+def google():
+    return render_template("google.html")
+
+@app.route("/hell")
+def hell():
+    return render_template("hell.html")
+
+@app.route("/hi")
+def hi():
+    user_name = request.args.get('name')
+    return render_template("hi.html", user_name=user_name)
