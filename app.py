@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request
 import random
+import requests
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
@@ -75,3 +77,26 @@ def hell():
 def hi():
     user_name = request.args.get('name')
     return render_template("hi.html", user_name=user_name)
+    
+
+@app.route("/summoner")
+def summoner():
+    return render_template("summoner.html")
+
+@app.route("/opgg")
+def opgg():
+    summoner = request.args.get('summoner')
+    url = 'http://www.op.gg/summoner/userName='
+    print(url+summoner)
+    html = requests.get(url+summoner).text
+    soup = BeautifulSoup(html, 'html.parser')
+    
+    win = soup.select_one('#SummonerLayoutContent > div.tabItem.Content.SummonerLayoutContent.summonerLayout-summary > div.SideContent > div.TierBox.Box > div.SummonerRatingMedium > div.TierRankInfo > div.TierInfo > span.WinLose > span.wins').text
+    lose = soup.select_one('#SummonerLayoutContent > div.tabItem.Content.SummonerLayoutContent.summonerLayout-summary > div.SideContent > div.TierBox.Box > div.SummonerRatingMedium > div.TierRankInfo > div.TierInfo > span.WinLose > span.losses').text
+    
+    # print(type(win))
+    # win의 타입이 bs4의 element여서 바로 리턴 불가
+    
+    return render_template("opgg.html",summoner=summoner,win=win,lose=lose)
+    
+    
